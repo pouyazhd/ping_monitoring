@@ -12,7 +12,6 @@ import datetime
 import time
 import matplotlib.pyplot as plt
 from threading import Thread
-import sys
 
 class ping_monitoring():
     def __init__(self,host_name,duration):
@@ -68,12 +67,3 @@ class ping_monitoring():
 
         if SaveFile == True:
             self.save_to_file.start()
-
-if __name__ == "__main__":
-    hostname = sys.argv[1]
-    # hostname= "192.168.1.1"
-    duration = int(sys.argv[2])
-    # duration = 1
-    ping_home= ping_monitoring(hostname,duration)
-    ping_home.realtime_monitoring(Plot_realtime=True, SaveFile=True)
-
