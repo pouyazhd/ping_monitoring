@@ -12,6 +12,7 @@ import datetime
 from ping3 import ping
 from threading import Thread
 from matplotlib import pyplot as plt
+from gi.repository import Notify
 
 
 def parse_args():
@@ -48,6 +49,7 @@ class PingMonitoring:
         3) second
             - 10s
     """
+
     def __init__(self, host_name, duration, custom_output=""):
         self.host_name = host_name
         self.duration_seconds, error = parse_duration(duration)
@@ -58,18 +60,21 @@ class PingMonitoring:
         self.ping_thread = Thread(target=self.pinging)
         self.plot_thread = Thread(target=self.plotting)
         self.save_to_file = Thread(target=self.write_results)
+        self.check_status_thread = Thread(target=self.status_changed)
+        self.status = {"Previous" :"Disconnected",
+                       "Current" :"Disconnected"}
 
     def pinging(self):
-        counter = 0
-        while counter < self.duration_seconds:
+        
+        for counter in range(self.duration_seconds):
             self.result.append(ping(self.host_name))
             current_time = datetime.datetime.now()
             self.report_time.append(
                 f"{current_time.hour}:{current_time.minute}:{current_time.second}.{current_time.microsecond}"
             )
-
             time.sleep(1)
-            counter += 1
+            
+
 
     def plotting(self):
         for i in range(0, self.duration_seconds, 10):
@@ -81,9 +86,32 @@ class PingMonitoring:
             plt.pause(10)
         plt.show()
 
+
     def write_results(self):
         with open(self.output_file, "w+") as fd:
-            fd.write(str(self.report_time[len(self.report_time) - 1]) + "\t" + str(self.result[len(self.result) - 1]))
+            fd.write(str(self.report_time[-1]) + "\t" + str(self.result[-1]))
+
+
+    def status_changed(self):
+        for counter in range(self.duration_seconds):
+            print(self.status["Current"])
+            if isinstance(self.result[-1], str):
+                self.status["Current"] = "Disconnected"
+            else: 
+                self.status["Current"] = "Connected"
+            
+            if self.status["Previous"] != self.status["Current"]:
+                self.Gnome_notify()
+                self.status["Previous"] = self.status["Current"]
+            
+                
+
+    def Gnome_notify(self):
+        Notify.init("Ping monitoring")
+        Notify.Notification.new(self.status["Current"]).show()
+
+        
+
 
     def realtime_monitoring(self, plot_realtime=False, save_file=True):
         """
@@ -98,3 +126,5 @@ class PingMonitoring:
 
         if save_file:
             self.save_to_file.start()
+
+        # self.check_status_thread.start()
