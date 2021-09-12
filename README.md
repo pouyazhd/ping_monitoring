@@ -9,12 +9,18 @@ duration: time duration based on hour
 
 Example: `python3 pinging.py 192.168.1.1 1`
 
-Libs and requierments
+Get Started
 ---
-* matplotlib
-* ping3
-* datetime
-* time
-* matplotlib
-* threading
-* sys
+after cloning the project, use:
+> pipenv install
+to install dependencies. then use the shell to run the code.
+> pipenv shell
+
+TODO
+---
+- [x] dependency management
+- [] define interface to work with monitoring tools
+- [] write unit tests
+- [] add Dockerfile
+- [] add ci pipelines
+- [] add flake8 pipeline
