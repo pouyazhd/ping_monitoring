@@ -12,7 +12,7 @@ Then use the shell subcommand to activate virtualenv.
 In order to run the code use:
 > python3 pinging.py --host {hostname} --duration {duration}
 
-you can use more command line options defined in section [CommandLine](#command-line)
+you can use more command line options defined in section [CommandLine](#commandline)
 
 duration could be one of
 * h (hour) -> `1h`
